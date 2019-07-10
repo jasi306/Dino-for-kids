@@ -1,0 +1,371 @@
+Link do programu:
+https://processing.org/
+
+__________________________________________________
+1.
+Szkielet.
+
+void setup(){ 
+    size(1600,800);  //takie samo jak zdjecie tla.
+}
+
+void draw(){
+  rysuj();
+  logika();
+}
+
+void rysuj(){
+
+}
+
+void logika(){
+
+}
+__________________________________________________
+2.
+rysowanie t³a.
+
+Przed setup()
+	PImage BG;
+
+w setup()
+	BG = loadImage("BG.jpg");
+
+w rysuj()
+	background(BG);
+
+__________________________________________________
+3.
+rysowanie dinozaura.
+
+Przed setup()
+	PImage Dino;
+	float x;
+	float h;
+
+w setup()
+	Dino = loadImage("dino.png");
+	x=width*1/8;
+	h=height *3/8  ;
+
+w rysuj()
+	background(BG);
+	image(Dino, x, h,60,60);
+
+__________________________________________________
+4.
+podskakiwanie.
+
+
+Przed setup()
+	float vh;
+
+w setup()
+	vh = 0;
+	
+w logika()
+	h = h - vh;
+
+na koncu programu dodajemy
+
+	void keyPressed(){
+	    vh = 10;
+	}
+
+__________________________________________________
+5.
+unikniecie odlatywania w kosmos, dodanie grawitacji.
+
+Przed setup()
+	float g;
+
+w setup()
+	g = 0.5;
+	
+w logika()
+	vh = vh - g;
+
+
+__________________________________________________
+6.
+unikniecie nieskonczonego spadania.
+
+	
+w logika()
+	h = h - vh;
+
+	zamieniamy na:
+
+	if(h <= height *3/8 || vh > 0){
+	    h = h - vh;
+	}
+
+__________________________________________________
+7.
+skakanie tylko na spacje.
+
+w keyPressed()
+	zamieniamy:
+	
+	vh = 10;
+	
+	na: 
+
+	if(key == ' '){
+	    vh = 10;
+	}
+__________________________________________________
+8.
+unikniecie nieskonczonego skakania.
+
+
+Przed setup()
+	boolean naZiemi;
+
+w setup()
+	naZiemi = false;
+
+w logika()
+	
+	za:
+
+	if(h <= height *3/8 || vh > 0){
+	    h = h - vh;
+	}
+	
+	dodaj:	
+
+	else {  //w przeciwnym razie.
+	    naZiemi = true; 
+	}
+
+W keyPressed()
+		
+	Fragment:
+
+	if(key == ' '){
+	    vh = 10;
+	    naZiemi = false;
+	}
+
+	Obuduj w infa:
+	
+	if( naZiemi ){ 
+	}
+
+	Tak ja ni¿ej:
+	
+	if( naZiemi ){  
+	    if(key == ' '){
+	        vh = 10;
+	        naZiemi = false;
+	    }
+	}
+
+
+__________________________________________________
+9.
+dodanie kaktusów i ziemi.
+
+
+Przed setup()
+	PImage kaktus;
+	float Cx;
+	float Ch;
+
+	float Cvx;
+
+w setup()
+	kaktus = loadImage("kaktus.png");
+	Cx=0;
+	Ch=height *3/8-130;
+
+	Cvx=4;
+
+w rysuj()
+
+	image(kaktus, Cx, Ch);
+
+w logika()  
+	
+	Cx = Cx - Cvx;
+
+__________________________________________________
+10.
+rosnacy stopien trudnosci.
+
+w logika()  
+	Cvx +=0.01;
+
+__________________________________________________
+11.
+Zapetlanie kaktusa.
+
+w logika()  
+
+	if (Cx <= -1600){
+	    Cx+=1600;
+	}    
+
+
+
+__________________________________________________
+12. wykrywanie kolizji i koniec gry.
+
+Przed setup()
+	
+	boolean przegrana;
+
+w setup()
+	przegrana = false;
+
+w draw()
+	
+	logika();
+
+	obuduj w if'a:
+
+	if(przegrana == false){
+	    logika();
+	}
+
+w logika()
+	if( abs(x - (Cx+1550)  )<10 ){  //szerokosc
+	    if( h > Ch+130 ){  //wysokosc
+	        przegrana = true;
+	    }
+	}
+
+w rysuj()
+	if(przegrana){
+	    fill(0);
+	    textSize(20);
+	    text("Przegra³eœ\nr aby zresetowaæ",width/2,height/2);
+	}
+
+__________________________________________________
+13.
+dodanie restartu.	
+
+W keyPressed():
+
+	if(key=='r'){
+	    setup(); 
+	}
+
+
+__________________________________________________
+14.
+dodawanie licznika punktow.
+
+w rysuj():
+
+	fill(0);
+	text("punkty " + (int)((Cvx-4)*100),width-100,100);  
+
+__________________________________________________
+CA£Y KOD.
+
+
+PImage BG;
+PImage Dino;
+
+float x;
+float h;
+float vh;
+
+boolean naZiemi;
+
+float g;
+
+PImage kaktus;
+
+float Cx;
+float Cvx;
+float Ch;
+
+boolean przegrana;
+void setup(){ 
+  size(1600,800);
+  x=width*1/8;
+  h=height *3/8  ;
+  g = 0.5;
+  
+  vh=0;
+  Dino = loadImage("dino.png");
+  BG = loadImage("BG.jpg");
+  kaktus = loadImage("kaktus.png");
+  
+  Cx=0;
+  Cvx=4;
+  Ch=height *3/8-130;
+  
+  przegrana = false;
+}
+
+void draw(){
+  rysuj();
+  if(przegrana == false){
+    logika();
+  }
+}
+
+void rysuj(){
+  background(BG);
+  image(kaktus, Cx, Ch);
+  image(Dino, x, h,60,60);
+  
+  fill(0);
+  text("punkty " + (int)((Cvx-4)*100),width-100,100);  
+  
+  if(przegrana){
+    fill(0);
+    textSize(20);
+    text("Przegra³eœ\nr aby zresetowaæ",width/2,height/2);
+  }
+}
+void logika(){
+
+  //skoki
+  if(h <= height *3/8 || vh > 0){
+    h = h - vh;
+  }
+  else {
+    naZiemi = true; 
+  }
+
+  //zmiany predkosci
+  vh = vh - g;
+     
+  //ruch kaktusa.
+  if (Cx <= -1600){
+    Cx+=1600;
+  }
+  Cvx +=0.01;
+  Cx = Cx - Cvx;
+  
+  //kolizje.
+  if( abs(x - (Cx+1550)  )<10 ){  //szerokosc
+    if( h > Ch+130 ){  //wysokosc
+      przegrana = true;
+    }
+  }
+
+}
+
+void keyPressed(){
+  //podskok
+  if( naZiemi ){  
+    if(key == ' '){
+      vh = 10;
+      naZiemi = false;
+    }
+  }
+  //reset
+  if(key=='r'){
+    setup(); 
+  }
+}
+__________________________________________________
+kontaktu do nas:
+291486@fizyka.umk.pl //Kamiñski Jan.
